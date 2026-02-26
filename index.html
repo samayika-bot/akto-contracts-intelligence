@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akto · Contract Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --ivory:#faf8f4;
+  --ivory2:#f4f0e8;
+  --ivory3:#ede8dc;
+  --white:#ffffff;
+  --ink:#1a1714;
+  --ink2:#3d3730;
+  --ink3:#6b6158;
+  --ink4:#9c9189;
+  --rule:#ddd8ce;
+  --rule2:#e8e3d8;
+  --accent:#8b4513;
+  --accent2:#a0522d;
+  --accent-pale:#fdf4ee;
+  --accent-mid:rgba(139,69,19,0.12);
+  --red:#b83232;
+  --red-pale:#fdf2f2;
+  --red-mid:rgba(184,50,50,0.1);
+  --amber:#8f5c00;
+  --amber-pale:#fdf8ee;
+  --amber-mid:rgba(143,92,0,0.1);
+  --green:#1d6b3e;
+  --green-pale:#f0faf4;
+  --green-mid:rgba(29,107,62,0.1);
+  --shadow-sm:0 1px 4px rgba(26,23,20,0.06);
+  --shadow-md:0 4px 20px rgba(26,23,20,0.08);
+  --shadow-lg:0 12px 48px rgba(26,23,20,0.1);
+  --r:8px;
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--ivory);
+  color:var(--ink);
+  min-height:100vh;
+  line-height:1.6;
+}
+
+/* Subtle texture overlay */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:0;
+  opacity:0.5;
+}
+
+/* ── HEADER ── */
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(250,248,244,0.95);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--rule);
+  height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;
+}
+
+.logo{display:flex;align-items:center;gap:14px}
+.logo-wordmark{
+  font-family:'Libre Baskerville',serif;
+  font-size:19px;
+  font-weight:700;
+  color:var(--ink);
+  letter-spacing:-0.02em;
+}
+.logo-divider{width:1px;height:18px;background:var(--rule);margin:0 2px}
+.logo-sub{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  color:var(--ink4);
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+}
+
+.header-right{display:flex;align-items:center;gap:16px}
+.status-dot{
+  display:flex;align-items:center;gap:7px;
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  color:var(--green);
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  background:var(--green-pale);
+  border:1px solid rgba(29,107,62,0.2);
+  padding:5px 12px;
+  border-radius:20px;
+}
+.status-dot::before{
+  content:'';width:6px;height:6px;
+  background:var(--green);border-radius:50%;
+  box-shadow:0 0 0 2px rgba(29,107,62,0.2);
+  animation:pulse 2.4s ease infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(0.85)}}
+
+/* ── HERO ── */
+.hero{
+  position:relative;z-index:1;
+  max-width:780px;margin:0 auto;
+  padding:72px 32px 52px;
+  text-align:center;
+}
+
+.hero-kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'DM Mono',monospace;
+  font-size:10px;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--accent);
+  background:var(--accent-pale);
+  border:1px solid rgba(139,69,19,0.2);
+  padding:6px 14px;border-radius:20px;
+  margin-bottom:24px;
+  opacity:0;animation:rise .7s .1s ease forwards;
+}
+
+.hero-h1{
+  font-family:'Libre Baskerville',serif;
+  font-size:clamp(36px,5.5vw,58px);
+  font-weight:700;
+  line-height:1.08;
+  letter-spacing:-0.025em;
+  color:var(--ink);
+  margin-bottom:18px;
+  opacity:0;animation:rise .7s .2s ease forwards;
+}
+.hero-h1 em{
+  color:var(--accent);
+  font-style:italic;
+  font-weight:400;
+}
+
+.hero-p{
+  font-size:16px;
+  color:var(--ink3);
+  line-height:1.7;
+  font-weight:300;
+  max-width:540px;margin:0 auto;
+  opacity:0;animation:rise .7s .3s ease forwards;
+}
+
+@keyframes rise{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ── CAPABILITY CHIPS ── */
+.caps{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:8px;
+  max-width:700px;margin:0 auto;
+  padding:0 24px 0;
+  position:relative;z-index:1;
+  opacity:0;animation:rise .7s .4s ease forwards;
+}
+.cap{
+  font-size:12px;font-weight:500;
+  color:var(--ink3);
+  background:var(--white);
+  border:1px solid var(--rule);
+  padding:6px 14px;border-radius:20px;
+  display:flex;align-items:center;gap:6px;
+  box-shadow:var(--shadow-sm);
+  transition:border-color .2s,color .2s,box-shadow .2s;
+}
+.cap:hover{border-color:var(--accent);color:var(--accent);box-shadow:0 2px 12px rgba(139,69,19,0.08)}
+.cap-icon{font-size:11px}
+
+/* ── UPLOAD SECTION ── */
+.usection{
+  position:relative;z-index:1;
+  max-width:780px;margin:36px auto 0;padding:0 24px 80px;
+  opacity:0;animation:rise .7s .5s ease forwards;
+}
+
+.ucard{
+  background:var(--white);
+  border:1px solid var(--rule);
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:var(--shadow-md);
+}
+
+/* Card header */
+.ucard-top{
+  background:var(--ivory2);
+  border-bottom:1px solid var(--rule);
+  padding:16px 28px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.ucard-label{
+  font-family:'DM Mono',monospace;
+  font-size:10px;color:var(--ink4);
+  letter-spacing:0.12em;text-transform:uppercase;
+  font-weight:500;
+}
+.fmts{display:flex;gap:6px}
+.fmt{
+  font-family:'DM Mono',monospace;font-size:10px;
+  background:var(--white);border:1px solid var(--rule);
+  color:var(--ink4);padding:3px 9px;border-radius:4px;
+  letter-spacing:0.06em;
+}
+
+/* Drop zone */
+.dzone{
+  padding:56px 32px;text-align:center;
+  cursor:pointer;transition:background .2s,border-color .2s;
+  border-bottom:1px solid var(--rule2);
+  position:relative;
+}
+.dzone:hover{background:var(--ivory)}
+.dzone.over{background:var(--accent-pale)}
+
+.dicon-wrap{
+  width:64px;height:64px;
+  margin:0 auto 18px;
+  background:var(--ivory2);
+  border:1.5px solid var(--rule);
+  border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),background .2s,border-color .2s,box-shadow .2s;
+}
+.dzone:hover .dicon-wrap{
+  transform:translateY(-4px);
+  background:var(--accent-pale);
+  border-color:rgba(139,69,19,0.3);
+  box-shadow:0 8px 24px rgba(139,69,19,0.12);
+}
+.dtitle{
+  font-family:'Libre Baskerville',serif;
+  font-size:19px;font-weight:700;
+  color:var(--ink);margin-bottom:7px;
+}
+.dsub{font-size:13px;color:var(--ink4)}
+.dsub strong{color:var(--accent);font-weight:600;font-family:'DM Sans',sans-serif}
+
+/* File loaded indicator */
+.fready{
+  display:none;align-items:center;gap:10px;
+  margin:12px 28px 0;
+  padding:10px 14px;
+  background:var(--green-pale);
+  border:1px solid rgba(29,107,62,0.2);
+  border-radius:7px;font-size:13px;
+}
+.fready.on{display:flex}
+.fready-name{
+  font-family:'DM Mono',monospace;font-size:12px;
+  color:var(--green);flex:1;font-weight:500;
+}
+.fready-icon{font-size:15px}
+.fclear{
+  background:none;border:none;color:var(--ink4);
+  cursor:pointer;font-size:17px;line-height:1;
+  padding:0 4px;transition:color .15s;
+}
+.fclear:hover{color:var(--red)}
+
+/* Or divider */
+.ordiv{
+  display:flex;align-items:center;gap:14px;
+  padding:0 28px;margin:22px 0 18px;
+}
+.ordiv::before,.ordiv::after{content:'';flex:1;height:1px;background:var(--rule2)}
+.orlabel{
+  font-family:'DM Mono',monospace;font-size:10px;
+  color:var(--ink4);letter-spacing:0.12em;text-transform:uppercase;
+}
+
+/* Paste */
+.pwrap{padding:0 28px 24px}
+.plabel{
+  font-family:'DM Mono',monospace;font-size:10px;
+  color:var(--ink4);letter-spacing:0.12em;
+  text-transform:uppercase;margin-bottom:9px;font-weight:500;
+}
+textarea.paste{
+  width:100%;min-height:140px;
+  background:var(--ivory);
+  border:1.5px solid var(--rule);
+  border-radius:8px;padding:14px 16px;
+  font-family:'DM Mono',monospace;font-size:12.5px;
+  line-height:1.75;color:var(--ink);
+  resize:vertical;outline:none;
+  transition:border-color .2s,background .2s;
+}
+textarea.paste:focus{
+  border-color:rgba(139,69,19,0.4);
+  background:var(--white);
+}
+textarea.paste::placeholder{color:var(--ink4)}
+
+/* Action row */
+.arow{
+  padding:20px 28px 26px;
+  display:flex;align-items:center;gap:16px;
+  border-top:1px solid var(--rule2);
+  background:var(--ivory2);
+}
+
+.btn-analyze{
+  display:flex;align-items:center;gap:9px;
+  padding:13px 30px;
+  background:var(--ink);color:var(--ivory);
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
+  border:none;border-radius:8px;cursor:pointer;
+  letter-spacing:0.01em;
+  transition:background .2s,transform .15s,box-shadow .2s;
+  box-shadow:0 2px 12px rgba(26,23,20,0.18);
+}
+.btn-analyze:hover{
+  background:var(--accent);
+  transform:translateY(-1px);
+  box-shadow:0 6px 24px rgba(139,69,19,0.22);
+}
+.btn-analyze:active{transform:translateY(0)}
+.btn-analyze:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+
+.ldwrap{
+  display:none;align-items:center;gap:11px;
+  font-family:'DM Mono',monospace;font-size:12px;color:var(--ink4);
+}
+.ldwrap.on{display:flex}
+.spin{
+  width:18px;height:18px;
+  border:2px solid var(--rule);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin .75s linear infinite;flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ══════════════════════ REPORT ══════════════════════ */
+#rpt{
+  display:none;position:relative;z-index:1;
+  max-width:1040px;margin:52px auto 0;padding:0 24px 100px;
+  animation:rise .55s ease both;
+}
+#rpt.on{display:block}
+
+/* Report header */
+.rhead{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:20px;
+  padding-bottom:28px;margin-bottom:36px;
+  border-bottom:2px solid var(--rule);
+}
+.rhead-left{}
+.r-doctype{
+  font-family:'Libre Baskerville',serif;
+  font-size:clamp(20px,3vw,30px);font-weight:700;
+  color:var(--ink);letter-spacing:-0.02em;line-height:1.15;
+  margin-bottom:7px;
+}
+.r-meta{
+  font-family:'DM Mono',monospace;font-size:11px;
+  color:var(--ink4);letter-spacing:0.05em;
+}
+
+.risk-pill{
+  flex-shrink:0;
+  font-family:'DM Mono',monospace;font-size:11px;font-weight:500;
+  padding:8px 18px;border-radius:6px;
+  letter-spacing:0.09em;text-transform:uppercase;
+  border:1.5px solid;margin-top:4px;
+  white-space:nowrap;
+}
+.rHIGH{background:var(--red-pale);color:var(--red);border-color:rgba(184,50,50,0.3)}
+.rMODERATE{background:var(--amber-pale);color:var(--amber);border-color:rgba(143,92,0,0.3)}
+.rLOW{background:var(--green-pale);color:var(--green);border-color:rgba(29,107,62,0.3)}
+
+/* Summary grid */
+.sgrid{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;
+  margin-bottom:36px;
+}
+.sc{
+  background:var(--white);
+  border:1px solid var(--rule);
+  border-radius:var(--r);
+  padding:20px 22px;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+  transition:box-shadow .2s,border-color .2s;
+}
+.sc:hover{box-shadow:var(--shadow-md);border-color:var(--accent)}
+.sc::after{
+  content:'';position:absolute;
+  bottom:0;left:22px;right:22px;height:2px;
+  background:linear-gradient(90deg,var(--accent),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.sc:hover::after{opacity:0.4}
+.slabel{
+  font-family:'DM Mono',monospace;font-size:10px;
+  text-transform:uppercase;letter-spacing:0.12em;
+  color:var(--ink4);margin-bottom:10px;font-weight:500;
+}
+.sval{font-size:13.5px;line-height:1.65;color:var(--ink)}
+.sval strong{color:var(--accent)}
+
+/* Section title */
+.stitle{
+  font-family:'Libre Baskerville',serif;
+  font-size:20px;font-weight:700;
+  color:var(--ink);letter-spacing:-0.01em;
+  margin-bottom:16px;
+  display:flex;align-items:center;gap:14px;
+}
+.stitle::after{content:'';flex:1;height:1px;background:var(--rule)}
+.sblk{margin-bottom:40px}
+
+/* Tables — base */
+.tbl{
+  width:100%;border-collapse:collapse;
+  background:var(--white);
+  border-radius:var(--r);overflow:hidden;
+  border:1px solid var(--rule);
+  box-shadow:var(--shadow-sm);
+  font-size:13.5px;
+}
+.tbl th{
+  font-family:'DM Mono',monospace;font-size:10px;
+  text-transform:uppercase;letter-spacing:0.11em;
+  color:var(--ink4);padding:12px 18px;
+  text-align:left;background:var(--ivory2);
+  border-bottom:1px solid var(--rule);font-weight:500;
+}
+.tbl td{
+  padding:13px 18px;border-bottom:1px solid var(--rule2);
+  vertical-align:top;line-height:1.6;
+}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--ivory)}
+.tk{
+  font-weight:600;color:var(--ink2);
+  width:210px;font-size:13px;
+  font-family:'DM Sans',sans-serif;
+}
+.tv{color:var(--ink)}
+.nil{
+  font-family:'DM Mono',monospace;font-size:11px;
+  color:var(--ink4);font-style:italic;
+}
+
+/* Flags table */
+.ftbl{
+  width:100%;border-collapse:collapse;
+  background:var(--white);
+  border-radius:var(--r);overflow:hidden;
+  border:1px solid var(--rule);
+  box-shadow:var(--shadow-sm);
+  font-size:13px;
+}
+.ftbl th{
+  font-family:'DM Mono',monospace;font-size:10px;
+  text-transform:uppercase;letter-spacing:0.11em;
+  color:var(--ink4);padding:12px 14px;
+  text-align:left;background:var(--ivory2);
+  border-bottom:1px solid var(--rule);font-weight:500;
+}
+.ftbl td{
+  padding:13px 14px;border-bottom:1px solid var(--rule2);
+  vertical-align:top;line-height:1.55;color:var(--ink);
+}
+.ftbl tr:last-child td{border-bottom:none}
+.ftbl tr:hover td{background:var(--ivory)}
+.sev{
+  font-family:'DM Mono',monospace;font-size:10px;
+  font-weight:500;padding:3px 9px;border-radius:5px;
+  letter-spacing:0.06em;white-space:nowrap;
+}
+.sH{background:var(--red-pale);color:var(--red)}
+.sM{background:var(--amber-pale);color:var(--amber)}
+.sL{background:var(--green-pale);color:var(--green)}
+
+/* Negotiation cards */
+.ngrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.nc{
+  background:var(--white);border:1px solid var(--rule);
+  border-radius:var(--r);padding:20px 22px;
+  box-shadow:var(--shadow-sm);
+  transition:border-color .2s,box-shadow .2s,transform .2s;
+}
+.nc:hover{
+  border-color:var(--accent);
+  box-shadow:0 6px 24px rgba(139,69,19,0.08);
+  transform:translateY(-2px);
+}
+.nnum{
+  font-family:'DM Mono',monospace;font-size:10px;
+  color:var(--accent);letter-spacing:0.12em;
+  text-transform:uppercase;margin-bottom:8px;font-weight:500;
+}
+.npoint{
+  font-family:'Libre Baskerville',serif;
+  font-size:15px;font-weight:700;
+  color:var(--ink);margin-bottom:7px;line-height:1.35;
+}
+.nwhy{
+  font-size:12.5px;color:var(--ink3);
+  margin-bottom:14px;line-height:1.6;
+}
+.ntags{display:flex;flex-direction:column;gap:7px}
+.ntag{
+  font-size:12px;color:var(--ink3);
+  display:flex;gap:8px;align-items:flex-start;
+}
+.ntl{
+  font-family:'DM Mono',monospace;font-size:10px;
+  color:var(--ink4);background:var(--ivory2);
+  border:1px solid var(--rule);padding:2px 7px;
+  border-radius:3px;flex-shrink:0;
+  letter-spacing:0.06em;white-space:nowrap;
+  margin-top:1px;
+}
+
+/* Signing recommendation */
+.signcard{
+  border-radius:var(--r);padding:24px 28px;
+  border:1.5px solid;font-size:14px;line-height:1.7;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.signcard::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:4px;
+}
+.sign-yes{background:var(--green-pale);border-color:rgba(29,107,62,0.25)}
+.sign-yes::before{background:linear-gradient(90deg,var(--green) 0%,rgba(29,107,62,0.2) 100%)}
+.sign-changes{background:var(--amber-pale);border-color:rgba(143,92,0,0.25)}
+.sign-changes::before{background:linear-gradient(90deg,var(--amber) 0%,rgba(143,92,0,0.2) 100%)}
+.sign-no{background:var(--red-pale);border-color:rgba(184,50,50,0.25)}
+.sign-no::before{background:linear-gradient(90deg,var(--red) 0%,rgba(184,50,50,0.2) 100%)}
+.sign-verdict{
+  font-family:'Libre Baskerville',serif;
+  font-size:20px;font-weight:700;margin-bottom:10px;line-height:1.2;
+}
+.sign-yes .sign-verdict{color:var(--green)}
+.sign-changes .sign-verdict{color:var(--amber)}
+.sign-no .sign-verdict{color:var(--red)}
+.sign-body{color:var(--ink2);font-size:14px}
+
+/* Report actions */
+.ract{
+  display:flex;gap:10px;
+  margin-top:40px;padding-top:28px;
+  border-top:1px solid var(--rule);
+}
+.btn-secondary{
+  padding:11px 22px;
+  background:var(--white);border:1px solid var(--rule);
+  border-radius:8px;color:var(--ink2);
+  font-size:13px;font-weight:500;
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:border-color .2s,background .2s,color .2s;
+  box-shadow:var(--shadow-sm);
+}
+.btn-secondary:hover{border-color:var(--ink);background:var(--ivory)}
+.btn-accent{
+  padding:11px 22px;
+  background:var(--accent-pale);border:1.5px solid rgba(139,69,19,0.3);
+  border-radius:8px;color:var(--accent);
+  font-size:13px;font-weight:600;
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:background .2s,border-color .2s;
+  box-shadow:var(--shadow-sm);
+}
+.btn-accent:hover{background:rgba(139,69,19,0.12);border-color:var(--accent)}
+
+/* Raw output */
+.rtoggle{
+  display:flex;align-items:center;gap:6px;
+  background:none;border:none;
+  color:var(--ink4);cursor:pointer;padding:0;
+  font-family:'DM Mono',monospace;font-size:11px;
+  letter-spacing:0.08em;text-transform:uppercase;
+  margin-top:10px;transition:color .15s;
+}
+.rtoggle:hover{color:var(--ink2)}
+.rout{
+  display:none;margin-top:12px;
+  background:var(--ivory2);border:1px solid var(--rule);
+  border-radius:8px;padding:20px;
+  font-family:'DM Mono',monospace;font-size:11.5px;
+  line-height:1.8;color:var(--ink2);
+  white-space:pre-wrap;overflow-x:auto;
+}
+.rout.on{display:block}
+
+/* ── FOOTER ── */
+footer{
+  position:relative;z-index:1;
+  border-top:1px solid var(--rule);
+  background:var(--ivory2);
+  padding:24px 48px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;
+  margin-top:40px;
+}
+.footer-brand{
+  display:flex;align-items:center;gap:10px;
+  font-family:'Libre Baskerville',serif;
+  font-size:14px;font-weight:700;
+  color:var(--ink);
+}
+.footer-brand-dot{
+  width:7px;height:7px;
+  background:var(--accent);border-radius:50%;
+}
+.footer-tagline{
+  font-family:'DM Mono',monospace;font-size:10px;
+  color:var(--ink4);letter-spacing:0.12em;text-transform:uppercase;
+}
+.footer-right{
+  font-family:'DM Mono',monospace;font-size:10px;
+  color:var(--ink4);letter-spacing:0.08em;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--ivory2)}
+::-webkit-scrollbar-thumb{background:var(--rule);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--ink4)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  header{padding:0 20px}
+  .hero{padding:48px 20px 36px}
+  .sgrid,.ngrid{grid-template-columns:1fr}
+  .ftbl{display:block;overflow-x:auto}
+  .arow{flex-wrap:wrap}
+  footer{padding:20px 24px;flex-direction:column;align-items:flex-start}
+}
+@media print{
+  body{background:white}
+  header,.usection,.caps,.hero,footer,.ract,.rtoggle,.rout{display:none!important}
+  #rpt{margin-top:0;padding:24px}
+  .sc,.tbl,.ftbl,.nc,.signcard{box-shadow:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="logo">
+    <span class="logo-wordmark">Akto</span>
+    <div class="logo-divider"></div>
+    <span class="logo-sub">Contract Intelligence</span>
+  </div>
+  <div class="header-right">
+    <div class="status-dot">AI Ready</div>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-kicker">⚖️ &nbsp;CFO-Grade Contract Analysis</div>
+  <h1 class="hero-h1">Review. <em>Negotiate.</em> Protect.</h1>
+  <p class="hero-p">Upload any contract and receive instant financial risk assessment, clause-level red flags, and actionable negotiation guidance — built for SaaS finance leaders.</p>
+</div>
+
+<!-- ── CAPABILITY CHIPS ── -->
+<div class="caps" style="margin-bottom:36px">
+  <div class="cap"><span class="cap-icon">📊</span> Risk Rating</div>
+  <div class="cap"><span class="cap-icon">📋</span> Key Terms Extraction</div>
+  <div class="cap"><span class="cap-icon">🚩</span> Red Flag Detection</div>
+  <div class="cap"><span class="cap-icon">🤝</span> Negotiation Guidance</div>
+  <div class="cap"><span class="cap-icon">✍️</span> Sign Recommendation</div>
+</div>
+
+<!-- ── UPLOAD CARD ── -->
+<div class="usection">
+  <div class="ucard">
+    <div class="ucard-top">
+      <span class="ucard-label">Upload Contract Document</span>
+      <div class="fmts">
+        <span class="fmt">PDF</span>
+        <span class="fmt">DOCX</span>
+        <span class="fmt">TXT</span>
+      </div>
+    </div>
+
+    <!-- Drop zone -->
+    <div class="dzone" id="dzone"
+         onclick="document.getElementById('fin').click()"
+         ondragover="odv(event)" ondragleave="odl()" ondrop="odp(event)">
+      <div class="dicon-wrap">📄</div>
+      <div class="dtitle">Drop your contract here</div>
+      <div class="dsub">or <strong>click to browse</strong> — PDF, DOCX, or plain text</div>
+    </div>
+    <input type="file" id="fin" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="ofs(event)">
+
+    <!-- File loaded -->
+    <div class="fready" id="fready">
+      <span class="fready-icon">📎</span>
+      <span class="fready-name" id="fname"></span>
+      <button class="fclear" onclick="clf()">✕</button>
+    </div>
+
+    <!-- OR -->
+    <div class="ordiv"><span class="orlabel">or paste text directly</span></div>
+
+    <!-- Paste -->
+    <div class="pwrap">
+      <div class="plabel">Contract Text</div>
+      <textarea class="paste" id="ctxt"
+        placeholder="Paste the full contract text here — MSA, NDA, Order Form, Vendor Agreement, DPA, SOW…&#10;&#10;You can combine a file upload with additional pasted text."></textarea>
+    </div>
+
+    <!-- Analyze -->
+    <div class="arow">
+      <button class="btn-analyze" id="abtn" onclick="run()">
+        <span>⚖️</span> Analyze Contract
+      </button>
+      <div class="ldwrap" id="ldwrap">
+        <div class="spin"></div>
+        <span id="ldmsg">Extracting clauses and assessing risk…</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ REPORT ══════════════════════ -->
+<div id="rpt">
+
+  <!-- Report header -->
+  <div class="rhead">
+    <div class="rhead-left">
+      <div class="r-doctype" id="r-type">Contract Analysis Report</div>
+      <div class="r-meta" id="r-meta"></div>
+    </div>
+    <div class="risk-pill" id="r-risk">MODERATE</div>
+  </div>
+
+  <!-- Executive Summary -->
+  <div class="sblk">
+    <div class="stitle">Executive Summary</div>
+    <div class="sgrid">
+      <div class="sc">
+        <div class="slabel">Commercial Intent</div>
+        <div class="sval" id="r-intent">—</div>
+      </div>
+      <div class="sc">
+        <div class="slabel">Signing Recommendation</div>
+        <div class="sval" id="r-rec">—</div>
+      </div>
+      <div class="sc">
+        <div class="slabel">Top 3 Concerns</div>
+        <div class="sval" id="r-concerns">—</div>
+      </div>
+      <div class="sc">
+        <div class="slabel">Priority Negotiation Points</div>
+        <div class="sval" id="r-priority">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Terms -->
+  <div class="sblk">
+    <div class="stitle">Key Business Terms</div>
+    <table class="tbl" id="terms-tbl">
+      <thead><tr><th>Term</th><th>Extracted Value</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- Red Flags -->
+  <div class="sblk">
+    <div class="stitle">Red Flag Analysis</div>
+    <table class="ftbl" id="flags-tbl">
+      <thead>
+        <tr>
+          <th style="width:165px">Risk</th>
+          <th style="width:88px">Severity</th>
+          <th>Clause / Location</th>
+          <th>Financial Impact</th>
+          <th>Suggested Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- Negotiation -->
+  <div class="sblk">
+    <div class="stitle">Negotiation Guidance</div>
+    <div class="ngrid" id="ngrid"></div>
+  </div>
+
+  <!-- Signing Recommendation -->
+  <div class="sblk">
+    <div class="stitle">Signing Recommendation</div>
+    <div class="signcard" id="signcard">
+      <div class="sign-verdict" id="sign-verdict">—</div>
+      <div class="sign-body" id="sign-body">—</div>
+    </div>
+  </div>
+
+  <!-- Raw JSON -->
+  <div>
+    <button class="rtoggle" onclick="document.getElementById('rout').classList.toggle('on')">
+      ▶ View raw JSON output
+    </button>
+    <div class="rout" id="rout"></div>
+  </div>
+
+  <!-- Actions -->
+  <div class="ract">
+    <button class="btn-accent" onclick="window.print()">🖨&nbsp; Print / Save PDF</button>
+    <button class="btn-secondary" onclick="rst()">← Analyze Another Contract</button>
+  </div>
+
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-brand">
+    <div class="footer-brand-dot"></div>
+    Akto
+    <span class="footer-tagline">&nbsp;· Contract Intelligence Platform</span>
+  </div>
+  <div class="footer-right">Built by Samayika Jain &nbsp;·&nbsp; © 2025 Akto</div>
+</footer>
+
+<!-- LIBS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script>
+const AK='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';
+let pdfOk=false,ft='',fn='';
+
+function lpdf(){
+  return new Promise(r=>{
+    if(pdfOk)return r();
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload=()=>{
+      pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      pdfOk=true;r();
+    };
+    document.head.appendChild(s);
+  });
+}
+
+function odv(e){e.preventDefault();document.getElementById('dzone').classList.add('over')}
+function odl(){document.getElementById('dzone').classList.remove('over')}
+function odp(e){e.preventDefault();odl();if(e.dataTransfer.files[0])pf(e.dataTransfer.files[0])}
+function ofs(e){if(e.target.files[0])pf(e.target.files[0])}
+
+async function pf(file){
+  const ext=file.name.split('.').pop().toLowerCase();
+  try{
+    if(ext==='txt'){ft=await file.text()}
+    else if(ext==='pdf'){
+      await lpdf();
+      const buf=await file.arrayBuffer();
+      const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+      let t='';
+      for(let i=1;i<=Math.min(pdf.numPages,80);i++){
+        const pg=await pdf.getPage(i);
+        const c=await pg.getTextContent();
+        t+=c.items.map(s=>s.str).join(' ')+'\n';
+      }
+      ft=t;
+    } else if(ext==='docx'||ext==='doc'){
+      const buf=await file.arrayBuffer();
+      const r=await mammoth.extractRawText({arrayBuffer:buf});
+      ft=r.value;
+    }
+    fn=file.name;
+    document.getElementById('fname').textContent=fn;
+    document.getElementById('fready').classList.add('on');
+  }catch(e){alert('Could not read file: '+e.message)}
+}
+
+function clf(){
+  ft='';fn='';
+  document.getElementById('fready').classList.remove('on');
+  document.getElementById('fin').value='';
+}
+
+async function run(){
+  const paste=document.getElementById('ctxt').value.trim();
+  const full=[ft,paste].filter(Boolean).join('\n\n');
+  if(!full){alert('Please upload a file or paste contract text first.');return}
+  ld(true,'Extracting clauses and assessing risk…');
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':AK,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-opus-4-6',
+        max_tokens:4096,
+        system:'You are a contract analysis engine. Your response must be PURE JSON only. CRITICAL: Do NOT use markdown code fences (no ```json, no ```). Do NOT use backticks. Do NOT add any text before or after. Your ENTIRE response must start with { and end with } — nothing else.',
+        messages:[{role:'user',content:bp(full)}]
+      })
+    });
+    if(!resp.ok){const e=await resp.json();throw new Error(e.error?.message||`API ${resp.status}`)}
+    const d=await resp.json();
+    const rawText=d.content[0].text;
+    rr(rawText);
+  }catch(e){
+    ld(false);
+    alert('Analysis failed: '+e.message);
+  }
+}
+
+function bp(text){
+  return `You are a SaaS CFO and commercial finance analyst. Analyze this contract and return ONLY a valid JSON object — no markdown, no fences, no preamble.
+
+CONTRACT TEXT:
+---
+${text.slice(0,80000)}
+---
+
+Return exactly this JSON structure:
+{
+  "doc_type": "e.g. MSA, NDA, DPA, Order Form, Vendor Agreement, SOW",
+  "overall_risk": "HIGH | MODERATE | LOW",
+  "commercial_intent": "2-3 sentence plain English summary of what this agreement does commercially",
+  "key_terms": {
+    "payment_terms": "string or Not identifiable",
+    "contract_duration": "string or Not identifiable",
+    "renewal_mechanics": "string or Not identifiable",
+    "termination_rights": "string or Not identifiable",
+    "refund_obligations": "string or Not identifiable",
+    "liability_caps": "string or Not identifiable",
+    "indemnity_obligations": "string or Not identifiable",
+    "confidentiality_scope": "string or Not identifiable",
+    "data_protection": "string or Not identifiable",
+    "insurance_requirements": "string or Not identifiable"
+  },
+  "red_flags": [
+    {
+      "risk": "string",
+      "severity": "HIGH | MEDIUM | LOW",
+      "clause": "string — clause reference or description",
+      "financial_impact": "string",
+      "suggested_action": "string"
+    }
+  ],
+  "negotiation_guidance": [
+    {
+      "point": "string",
+      "why_matters": "string",
+      "market_standard": "string",
+      "fallback": "string"
+    }
+  ],
+  "top_3_concerns": ["string", "string", "string"],
+  "priority_negotiation_points": ["string", "string", "string"],
+  "sign_recommendation": "SIGN | SIGN WITH CHANGES | DO NOT SIGN",
+  "sign_rationale": "2-3 sentences explaining the recommendation"
+}
+
+Think like a SaaS CFO protecting revenue, cash flow, and limiting liability. Use 'Not identifiable' only when the information genuinely is not in the contract.`;
+}
+
+function xj(raw){
+  // Step 1: direct parse
+  try{return JSON.parse(raw.trim())}catch(e){}
+  // Step 2: strip markdown fences completely
+  let c=raw.replace(/`{1,3}[a-zA-Z]*/g,'').replace(/`{1,3}/g,'').trim();
+  try{return JSON.parse(c)}catch(e){}
+  // Step 3: brace-counting extraction of outermost JSON object
+  let depth=0,start=-1,end=-1;
+  for(let i=0;i<raw.length;i++){
+    if(raw[i]==='{'){if(depth===0)start=i;depth++;}
+    else if(raw[i]==='}'){depth--;if(depth===0){end=i;break;}}
+  }
+  if(start!==-1&&end!==-1){
+    const chunk=raw.slice(start,end+1);
+    try{return JSON.parse(chunk)}catch(e){}
+    // Step 4: fix trailing commas and retry
+    try{return JSON.parse(chunk.replace(/,\s*([}\]])/g,'$1'))}catch(e){}
+  }
+  // Step 5: try to find JSON after a colon or newline (edge case)
+  const jsonStart=raw.search(/\{\s*"/);
+  if(jsonStart>0){
+    const sub=raw.slice(jsonStart);
+    try{return JSON.parse(sub)}catch(e){}
+  }
+  return null;
+}
+
+function rr(raw){
+  ld(false);
+  const d=xj(raw);
+  document.getElementById('rout').textContent=d?JSON.stringify(d,null,2):raw;
+
+  if(!d){
+    document.getElementById('r-type').textContent='Analysis Complete';
+    document.getElementById('r-meta').textContent='Structured rendering failed — see raw output below';
+    document.getElementById('rout').classList.add('on');
+    document.getElementById('rpt').classList.add('on');
+    document.getElementById('rpt').scrollIntoView({behavior:'smooth'});
+    return;
+  }
+
+  // Header
+  document.getElementById('r-type').textContent=(d.doc_type||'Contract')+' — Analysis Report';
+  document.getElementById('r-meta').textContent='Generated '+new Date().toLocaleString()+(fn?' · '+fn:'');
+
+  // Risk badge
+  const rb=document.getElementById('r-risk');
+  const risk=d.overall_risk||'MODERATE';
+  rb.textContent=risk;
+  rb.className='risk-pill r'+risk;
+
+  // Summary cards
+  document.getElementById('r-intent').textContent=d.commercial_intent||'—';
+  document.getElementById('r-rec').innerHTML=
+    `<strong>${esc(d.sign_recommendation||'—')}</strong><br>
+     <span style="font-size:12.5px;color:var(--ink3);font-weight:300">${esc(d.sign_rationale||'')}</span>`;
+  document.getElementById('r-concerns').innerHTML=
+    (d.top_3_concerns||[]).map((c,i)=>`<div style="margin-bottom:5px">${i+1}. ${esc(c)}</div>`).join('');
+  document.getElementById('r-priority').innerHTML=
+    (d.priority_negotiation_points||[]).map((p,i)=>`<div style="margin-bottom:5px">${i+1}. ${esc(p)}</div>`).join('');
+
+  // Key terms
+  const TERMS={
+    payment_terms:'Payment Terms',
+    contract_duration:'Contract Duration',
+    renewal_mechanics:'Renewal Mechanics',
+    termination_rights:'Termination Rights',
+    refund_obligations:'Refund Obligations',
+    liability_caps:'Liability Caps',
+    indemnity_obligations:'Indemnity Obligations',
+    confidentiality_scope:'Confidentiality Scope',
+    data_protection:'Data Protection',
+    insurance_requirements:'Insurance Requirements'
+  };
+  const tb=document.querySelector('#terms-tbl tbody');
+  tb.innerHTML='';
+  const kt=d.key_terms||{};
+  for(const[k,label]of Object.entries(TERMS)){
+    const v=kt[k];
+    const disp=(!v||v==='null'||v==='Not identifiable')
+      ?'<span class="nil">Not identifiable</span>'
+      :esc(v);
+    tb.innerHTML+=`<tr><td class="tk">${label}</td><td class="tv">${disp}</td></tr>`;
+  }
+
+  // Red flags
+  const fb=document.querySelector('#flags-tbl tbody');
+  fb.innerHTML='';
+  if(d.red_flags&&d.red_flags.length){
+    d.red_flags.forEach(f=>{
+      const sv=f.severity||'LOW';
+      const cls={HIGH:'sH',MEDIUM:'sM',LOW:'sL'}[sv]||'sL';
+      fb.innerHTML+=`<tr>
+        <td>${esc(f.risk||'—')}</td>
+        <td><span class="sev ${cls}">${sv}</span></td>
+        <td>${esc(f.clause||'—')}</td>
+        <td>${esc(f.financial_impact||'—')}</td>
+        <td>${esc(f.suggested_action||'—')}</td>
+      </tr>`;
+    });
+  } else {
+    fb.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--ink4);padding:22px;font-style:italic;font-family:\'DM Mono\',monospace;font-size:12px">No significant red flags identified</td></tr>';
+  }
+
+  // Negotiation guidance
+  const ng=document.getElementById('ngrid');
+  ng.innerHTML='';
+  (d.negotiation_guidance||[]).forEach((n,i)=>{
+    ng.innerHTML+=`
+      <div class="nc">
+        <div class="nnum">Point ${String(i+1).padStart(2,'0')}</div>
+        <div class="npoint">${esc(n.point||'')}</div>
+        <div class="nwhy">${esc(n.why_matters||'')}</div>
+        <div class="ntags">
+          <div class="ntag"><span class="ntl">Market Std</span><span>${esc(n.market_standard||'—')}</span></div>
+          <div class="ntag"><span class="ntl">Fallback</span><span>${esc(n.fallback||'—')}</span></div>
+        </div>
+      </div>`;
+  });
+
+  // Signing recommendation
+  const sc=document.getElementById('signcard');
+  const rec=(d.sign_recommendation||'').toLowerCase();
+  sc.className='signcard '+(rec.includes('do not')?'sign-no':rec.includes('with')?'sign-changes':'sign-yes');
+  document.getElementById('sign-verdict').textContent=d.sign_recommendation||'—';
+  document.getElementById('sign-body').textContent=d.sign_rationale||'—';
+
+  // Show
+  document.getElementById('rpt').classList.add('on');
+  setTimeout(()=>document.getElementById('rpt').scrollIntoView({behavior:'smooth'}),60);
+}
+
+function ld(on,msg){
+  document.getElementById('abtn').disabled=on;
+  const w=document.getElementById('ldwrap');
+  if(on){w.classList.add('on');document.getElementById('ldmsg').textContent=msg||'Analyzing…'}
+  else{w.classList.remove('on')}
+}
+
+function rst(){
+  clf();
+  document.getElementById('ctxt').value='';
+  document.getElementById('rpt').classList.remove('on');
+  document.getElementById('rout').classList.remove('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function esc(s){
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
