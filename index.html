@@ -842,7 +842,7 @@ footer{
 <!-- LIBS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <script>
-const AK='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';
+const AK='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';
 let pdfOk=false,ft='',fn='';
 
 function lpdf(){
@@ -922,7 +922,14 @@ async function run(){
     rr(rawText);
   }catch(e){
     ld(false);
-    alert('Analysis failed: '+e.message);
+    const msg=e.message||'Unknown error';
+    let friendly='Analysis failed: '+msg;
+    if(msg.includes('401'))friendly='❌ API Key rejected (401) — your key may be invalid or expired. Please check your Anthropic console.';
+    else if(msg.includes('403'))friendly='❌ Access denied (403) — CORS or permissions issue. Try opening the file locally instead of via GitHub Pages.';
+    else if(msg.includes('429'))friendly='❌ Rate limit or no credits (429) — check your Anthropic billing at console.anthropic.com.';
+    else if(msg.includes('500'))friendly='❌ Anthropic server error (500) — please try again in a moment.';
+    else if(msg.includes('Failed to fetch'))friendly='❌ Network error — your browser may be blocking the API call. Try a different browser or disable extensions.';
+    alert(friendly);
   }
 }
 
